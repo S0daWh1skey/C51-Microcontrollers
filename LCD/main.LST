@@ -1,0 +1,170 @@
+C51 COMPILER V7.06   MAIN                                                                  05/16/2017 09:13:43 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: E:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include<reg52.h>
+   2          #include<intrins.h>
+   3          sbit RS = P2^4;
+   4          sbit RW = P2^5;
+   5          sbit EN = P2^6;
+   6          
+   7          #define RS_CLR RS=0
+   8          #define RS_SET RS=1
+   9          
+  10          #define RW_CLR RW=0
+  11          #define RW_SET RW=1
+  12          
+  13          #define EN_CLR EN=0
+  14          #define EN_SET EN=1
+  15          
+  16          #define DataPort P0
+  17          
+  18          void DelayUs2x(unsigned int t)
+  19          {   
+  20   1       while(--t);
+  21   1      }
+  22          
+  23          void DelayMs(unsigned int t)
+  24          {
+  25   1           
+  26   1       while(t--)
+  27   1       {
+  28   2           DelayUs2x(245);
+  29   2               DelayUs2x(245);
+  30   2       }
+  31   1      }
+  32          
+  33          bit LCD_Check_Busy(void){
+  34   1              DataPort=0xff;
+  35   1              RS_CLR;
+  36   1              RW_SET;
+  37   1              EN_CLR;
+  38   1              _nop_();
+  39   1              EN_SET;
+  40   1              return (bit)(DataPort & 0x80);
+  41   1      }
+  42          
+  43          void LCD_Write_Com(unsigned char com){
+  44   1              //while(LCD_Check_Busy());//忙则等待
+  45   1              DelayMs(5);
+  46   1              RS_CLR;
+  47   1              RW_CLR;
+  48   1              EN_SET;
+  49   1              DataPort=com;
+  50   1              _nop_();
+  51   1              EN_CLR;
+  52   1      }
+  53          
+  54          void LCD_Clear(void){
+  55   1              LCD_Write_Com(0x01);
+C51 COMPILER V7.06   MAIN                                                                  05/16/2017 09:13:43 PAGE 2   
+
+  56   1              DelayMs(5);
+  57   1      }
+  58          
+  59          void LCD_Write_Data(unsigned char Data){
+  60   1              //while(LCD_Check_Busy());//忙则等待
+  61   1              DelayMs(5);
+  62   1              RS_SET;
+  63   1              RW_CLR;
+  64   1              EN_SET;
+  65   1              DataPort=Data;
+  66   1              _nop_();
+  67   1              EN_CLR;
+  68   1      }
+  69          
+  70          void LCD_Write_Char(unsigned char x,unsigned char y,unsigned char Data){
+  71   1              if(y==0){
+  72   2                      LCD_Write_Com(0x80+x);
+  73   2                              }
+  74   1              else{
+  75   2                      LCD_Write_Com(0xC0+x);
+  76   2                      }
+  77   1              LCD_Write_Data(Data);   
+  78   1      }
+  79          
+  80          void LCD_Write_String(unsigned char x,unsigned char y,unsigned char *s){
+  81   1              if(y==0){
+  82   2                      LCD_Write_Com(0x80+x);
+  83   2                              }
+  84   1              else{
+  85   2                      LCD_Write_Com(0xC0+x);
+  86   2                      }
+  87   1              while(*s){
+  88   2              LCD_Write_Data(*s);
+  89   2              s++;
+  90   2              }       
+  91   1      }
+  92          
+  93          void LCD_Init(void){
+  94   1              LCD_Write_Com(0x38);//显示模式设置
+  95   1              DelayMs(5);
+  96   1              LCD_Write_Com(0x38);
+  97   1              DelayMs(5);
+  98   1              LCD_Write_Com(0x38);
+  99   1              DelayMs(5);
+ 100   1              LCD_Write_Com(0x38);
+ 101   1              LCD_Write_Com(0x08);//显示关闭
+ 102   1              LCD_Write_Com(0x01);//显示清屏
+ 103   1              LCD_Write_Com(0x06);//显示光标移动设置
+ 104   1              DelayMs(5);
+ 105   1              LCD_Write_Com(0x0C);//显示开及光标设置
+ 106   1      }
+ 107          
+ 108          void main(void){
+ 109   1      /*LCD_Init();//初始化
+ 110   1      LCD_Clear();//清屏
+ 111   1      while(1){
+ 112   1      LCD_Write_Char(3,0,'i');
+ 113   1      LCD_Write_Char(5,0,'l');
+ 114   1      LCD_Write_Char(6,0,'o');
+ 115   1      LCD_Write_Char(7,0,'v');
+ 116   1      LCD_Write_Char(8,0,'e');
+ 117   1      LCD_Write_Char(10,0,'y');
+C51 COMPILER V7.06   MAIN                                                                  05/16/2017 09:13:43 PAGE 3   
+
+ 118   1      LCD_Write_Char(11,0,'o');
+ 119   1      LCD_Write_Char(12,0,'u');
+ 120   1      LCD_Write_String(1,1,"aaaasdfghjkllll;");
+ 121   1      //LCD_Write_String(1,1,"キミノコ トガスキダ ");
+ 122   1      while(1){
+ 123   1              DelayMs(500);
+ 124   1              LCD_Write_Com(0x18);
+ 125   1      }
+ 126   1      }*/
+ 127   1      unsigned char i,*p;
+ 128   1      LCD_Init();
+ 129   1      while(1){
+ 130   2              i=1;
+ 131   2              p="www.doflye.net";
+ 132   2              LCD_Clear();
+ 133   2              LCD_Write_String(3,0,"Welcome to");
+ 134   2              while(*p){
+ 135   3                      LCD_Write_Char(i,1,*p);
+ 136   3                      i++;
+ 137   3                      p++;
+ 138   3                      DelayMs(50);
+ 139   3              }
+ 140   2              DelayMs(50);
+ 141   2      }
+ 142   1      }
+ 143          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    305    ----
+   CONSTANT SIZE    =     26    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       8
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

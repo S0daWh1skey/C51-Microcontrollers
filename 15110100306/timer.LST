@@ -1,0 +1,74 @@
+C51 COMPILER V7.06   TIMER                                                                 06/13/2017 07:45:55 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE TIMER
+OBJECT MODULE PLACED IN timer.OBJ
+COMPILER INVOKED BY: E:\Keil\C51\BIN\C51.EXE timer.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include<reg52.h>
+   2          #include"display.h"
+   3          #include"timer.h"
+   4          /*------------------------------------------------
+   5                              定时器初始化子程序
+   6          ------------------------------------------------*/
+   7          void Init_Timer0(void)
+   8          {
+   9   1       TMOD |= 0x01;    
+  10   1       EA=1;            
+  11   1       ET0=1;           //定时器中断打开
+  12   1       TR0=1;           //定时器开关打开
+  13   1      }
+  14          /*------------------------------------------------
+  15                           定时器中断子程序
+  16          ------------------------------------------------*/
+  17          void Timer0_isr(void) interrupt 1 
+  18          {
+  19   1       static unsigned int num,i; 
+  20   1       TH0=(65536-2000)/256;//2ms
+  21   1       TL0=(65536-2000)%256;
+  22   1       
+  23   1       Display(0,8);     
+  24   1       i++;
+  25   1       if(i==10)          //20ms
+  26   1          {
+  27   2              i=0;
+  28   2              UpdateTimeFlag=1; 
+  29   2              }
+  30   1      if(Time_seted_flag==1){
+  31   2       num++;
+  32   2       if(num==500)        //大致1s
+  33   2         {
+  34   3          num=0;
+  35   3              second++;
+  36   3              if(second==60)           {
+  37   4                second=0;       
+  38   4                minute++;
+  39   4                if(minute==60)
+  40   4                  {
+  41   5                       minute=0;
+  42   5                       hour++;
+  43   5                       if(hour==24)
+  44   5                         hour=0;
+  45   5                      }
+  46   4                }
+  47   3              }
+  48   2        }
+  49   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    154    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+C51 COMPILER V7.06   TIMER                                                                 06/13/2017 07:45:55 PAGE 2   
+
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      5    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

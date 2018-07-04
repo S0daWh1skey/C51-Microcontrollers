@@ -1,0 +1,58 @@
+C51 COMPILER V7.06   KEYSCAN                                                               06/11/2017 18:09:56 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE KEYSCAN
+OBJECT MODULE PLACED IN keyscan.OBJ
+COMPILER INVOKED BY: E:\Keil\C51\BIN\C51.EXE keyscan.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include<reg52.h>
+   2          #include"keyscan.h"
+   3          #include"delay.h"
+   4          /*------------------------------------------------
+   5          °´¼üÉ¨Ãèº¯Êý£¬·µ»ØÉ¨Ãè¼üÖµ
+   6          ------------------------------------------------*/
+   7          unsigned char KeyScan(void)
+   8          {
+   9   1       unsigned char keyvalue;
+  10   1       if(KeyPort!=0xff)
+  11   1         {
+  12   2          DelayMs(10);
+  13   2          if(KeyPort!=0xff)
+  14   2                 {
+  15   3                  keyvalue=KeyPort;
+  16   3                  while(KeyPort!=0xff);
+  17   3                      switch(keyvalue)
+  18   3                      {
+  19   4                       case 0xfe:return 1;break;
+  20   4                       case 0xfd:return 2;break;
+  21   4                       case 0xfb:return 3;break;
+  22   4                       case 0xf7:return 4;break;
+  23   4                       case 0xef:return 5;break;
+  24   4                       case 0xdf:return 6;break;
+  25   4                       case 0xbf:return 7;break;
+  26   4                       case 0x7f:return 8;break;
+  27   4                       default:return   0;break;
+  28   4                      }
+  29   3                }
+  30   2         }
+  31   1         return 0;
+  32   1      }
+  33          
+  34          
+  35          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     84    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

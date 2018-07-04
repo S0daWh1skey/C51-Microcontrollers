@@ -1,0 +1,51 @@
+C51 COMPILER V7.06   DELAY                                                                 06/11/2017 18:09:54 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE DELAY
+OBJECT MODULE PLACED IN delay.OBJ
+COMPILER INVOKED BY: E:\Keil\C51\BIN\C51.EXE delay.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include<reg52.h>
+   2          #include<intrins.h>
+   3          #include"delay.h"
+   4          /*------------------------------------------------
+   5           uS延时函数，含有输入参数 unsigned char t，无返回值
+   6           unsigned char 是定义无符号字符变量，其值的范围是
+   7           0~255 这里使用晶振12M，精确延时请使用汇编,大致延时
+   8           长度如下 T=tx2+5 uS 
+   9          ------------------------------------------------*/
+  10          void DelayUs2x(unsigned char t)
+  11          {   
+  12   1       while(--t);
+  13   1      }
+  14          /*------------------------------------------------
+  15           mS延时函数，含有输入参数 unsigned char t，无返回值
+  16           unsigned char 是定义无符号字符变量，其值的范围是
+  17           0~255 这里使用晶振12M，精确延时请使用汇编
+  18          ------------------------------------------------*/
+  19          void DelayMs(unsigned char t)
+  20          {
+  21   1           
+  22   1       while(t--)
+  23   1       {
+  24   2           //大致延时1mS
+  25   2           DelayUs2x(245);
+  26   2               DelayUs2x(245);
+  27   2       }
+  28   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     24    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

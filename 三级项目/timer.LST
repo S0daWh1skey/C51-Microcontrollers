@@ -1,0 +1,77 @@
+C51 COMPILER V7.06   TIMER                                                                 06/11/2017 18:09:56 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE TIMER
+OBJECT MODULE PLACED IN timer.OBJ
+COMPILER INVOKED BY: E:\Keil\C51\BIN\C51.EXE timer.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include<reg52.h>
+   2          #include"display.h"
+   3          #include"timer.h"
+   4          /*------------------------------------------------
+   5                              定时器初始化子程序
+   6          ------------------------------------------------*/
+   7          void Init_Timer0(void)
+   8          {
+   9   1       TMOD |= 0x01;    //使用模式1，16位定时器，使用"|"符号可以在使用多个定时器时不受影响                 
+  10   1       //TH0=0x00;          //给定初值
+  11   1       //TL0=0x00;
+  12   1       EA=1;            //总中断打开
+  13   1       ET0=1;           //定时器中断打开
+  14   1       TR0=1;           //定时器开关打开
+  15   1      }
+  16          /*------------------------------------------------
+  17                           定时器中断子程序
+  18          ------------------------------------------------*/
+  19          void Timer0_isr(void) interrupt 1 
+  20          {
+  21   1       static unsigned int num,i; 
+  22   1       TH0=(65536-2000)/256;//重新赋值 2ms 定时器初始值是63536 将数字赋给高八位
+  23   1       TL0=(65536-2000)%256;//将数字赋给低八位  //两毫秒定时器溢出 中断
+  24   1       
+  25   1       Display(0,8);       // 调用数码管扫描
+  26   1       i++;
+  27   1       if(i==10)          //20ms更新一次 FPS=50
+  28   1          {
+  29   2              i=0;//重置i
+  30   2              UpdateTimeFlag=1; //更新时间志位置1 开始更新八段数码管上的数字 全局变量
+  31   2              }
+  32   1      if(Time_seted_flag==1){
+  33   2       num++;
+  34   2       if(num==500)        //大致1s
+  35   2         {
+  36   3          num=0;
+  37   3              second++;
+  38   3              if(second==60)  //秒到60，分钟加1
+  39   3               {
+  40   4                second=0;       
+  41   4                minute++;
+  42   4                if(minute==60)//分钟到60，小时加1
+  43   4                  {
+  44   5                       minute=0;
+  45   5                       hour++;
+  46   5                       if(hour==24)//小时到24，回零
+  47   5                         hour=0;
+  48   5                      }
+  49   4                }
+  50   3              }
+  51   2        }
+  52   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+C51 COMPILER V7.06   TIMER                                                                 06/11/2017 18:09:56 PAGE 2   
+
+   CODE SIZE        =    154    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      5    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

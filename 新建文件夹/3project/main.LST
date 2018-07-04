@@ -1,0 +1,286 @@
+C51 COMPILER V7.06   MAIN                                                                  05/23/2017 10:34:55 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\obj\main.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND OBJECT(.\obj\main.obj)
+
+stmt level    source
+
+   1          #include<reg52.h>
+   2          #include"1602.h"
+   3          #include"delay.h"
+   4          #include"clock.h"
+   5          #include<intrins.h>
+   6          
+   7          unsigned char date[11]={'1','9','9','9','-','1','2','-','3','1'};
+   8          unsigned char time[9]={'2','3',':','5','9',':','5','5'};
+   9          unsigned char alarm[9]={'0','0',':','0','0',':','0','0'};
+  10          unsigned char alarmflag=0,mode=0,flag=0;//闹钟开关，选择年月日时分秒，时钟模式/闹钟模式
+  11          unsigned char cnt=0;
+  12          
+  13          void dating(void)
+  14          {
+  15   1              unsigned int y,m,d;
+  16   1              unsigned char month[13]={0,31,28,31,30,31,30,31,31,30,31,30,31};
+  17   1              y=(date[0]-'0')*1000+(date[1]-'0')*100+(date[2]-'0')*10+(date[3]-'0');
+  18   1              m=(date[5]-'0')*10+(date[6]-'0');
+  19   1              d=(date[8]-'0')*10+(date[9]-'0')+1;
+  20   1              if(y%400==0||y%100!=0&&y%4==0)
+  21   1                      month[2]=29;
+  22   1              else month[2]=28;
+  23   1              if(d>month[m])
+  24   1              {
+  25   2                      m++;
+  26   2                      d=1;
+  27   2              }
+  28   1              if(m>12)
+  29   1              {
+  30   2                      y++;
+  31   2                      m=1;
+  32   2              }
+  33   1              if(y>9999)y=0;
+  34   1              date[0]=y/1000+'0';
+  35   1              date[1]=y/100%10+'0';
+  36   1              date[2]=y/10%10+'0';
+  37   1              date[3]=y%10+'0';
+  38   1              date[5]=m/10+'0';
+  39   1              date[6]=m%10+'0';
+  40   1              date[8]=d/10+'0';
+  41   1              date[9]=d%10+'0';
+  42   1      }
+  43          void timing(void)
+  44          {
+  45   1              unsigned int h,m,s;
+  46   1              h=(time[0]-'0')*10+(time[1]-'0');
+  47   1              m=(time[3]-'0')*10+(time[4]-'0');
+  48   1              s=(time[6]-'0')*10+(time[7]-'0')+1;
+  49   1              if(s>59)
+  50   1              {
+  51   2                      s=0;
+  52   2                      m++;
+  53   2              }
+  54   1              if(m>59)
+  55   1              {
+C51 COMPILER V7.06   MAIN                                                                  05/23/2017 10:34:55 PAGE 2   
+
+  56   2                      m=0;
+  57   2                      h++;
+  58   2              }
+  59   1              if(h>23)
+  60   1              {
+  61   2                      h=0;
+  62   2                      dating();
+  63   2              }
+  64   1              time[0]=h/10+'0';
+  65   1              time[1]=h%10+'0';
+  66   1              time[3]=m/10+'0';
+  67   1              time[4]=m%10+'0';
+  68   1              time[6]=s/10+'0';
+  69   1              time[7]=s%10+'0';
+  70   1      }
+  71          bit cmp(char *a,char *b)
+  72          {
+  73   1              int i;
+  74   1              for(i=0;i<8;i++)
+  75   1                      if(a[i]!=b[i])
+  76   1                              return 0;
+  77   1              return 1;
+  78   1      }
+  79          
+  80          void timer(void) interrupt 1
+  81          {
+  82   1              cnt++;
+  83   1              if(cnt==15)
+  84   1              {
+  85   2                      cnt=0;
+  86   2                      timing();
+  87   2              }
+  88   1      }
+  89          
+  90          void init()
+  91          {
+  92   1              cnt=0;
+  93   1              TMOD=0x01;
+  94   1              TL0=15536%256;
+  95   1              TH0=15536/256;
+  96   1              IT1=IT0=EA=EX1=EX0=ET0=TR0=1;
+  97   1      }
+  98          
+  99          void main(void)
+ 100          {
+ 101   1              unsigned char m,d,h,mi,s,month[13]={0,31,28,31,30,31,30,31,31,30,31,30,31};
+ 102   1              unsigned int y,add_sub=0,n=1000;
+ 103   1              P3=0xff;
+ 104   1              init();
+ 105   1              LCD_Init();     
+ 106   1              LCD_Clear();
+ 107   1              while(1)
+ 108   1              {
+ 109   2                      if(alarmflag&&cmp(time,alarm))
+ 110   2                      {
+ 111   3                              while(n--)
+ 112   3                              Beep=~Beep;
+ 113   3                              n=1000;
+ 114   3                      }
+ 115   2                      Beep=0;
+ 116   2                      LCD_Write_String(3,0,date);
+ 117   2                      if(flag==0)
+C51 COMPILER V7.06   MAIN                                                                  05/23/2017 10:34:55 PAGE 3   
+
+ 118   2                              LCD_Write_String(4,1,time);
+ 119   2                      else if(flag==1)
+ 120   2                              LCD_Write_String(4,1,alarm);
+ 121   2                      LCD_Write_Char(0,0,(alarmflag+'0'));
+ 122   2                      LCD_Write_Char(15,0,(mode+'0'));
+ 123   2                      LCD_Write_Char(0,1,(flag+'0'));
+ 124   2                      if(!KEY1)
+ 125   2                      {
+ 126   3                              while(!KEY1);
+ 127   3                              if(flag)
+ 128   3                              {
+ 129   4                                      mode++;
+ 130   4                                      if(mode>3)
+ 131   4                                              mode=0;
+ 132   4                              }
+ 133   3                              else 
+ 134   3                              {
+ 135   4                                      mode++;
+ 136   4                                      if(mode>6)
+ 137   4                                              mode=0;
+ 138   4                              }
+ 139   3                      }
+ 140   2                      if(!KEY2||!KEY3)
+ 141   2                      {
+ 142   3                              if(!KEY2)
+ 143   3                              {
+ 144   4                                      while(!KEY2);
+ 145   4                                      add_sub=1;
+ 146   4                              }
+ 147   3                              else if(!KEY3)
+ 148   3                              {
+ 149   4                                      while(!KEY3);
+ 150   4                                      add_sub=-1;
+ 151   4                              }
+ 152   3                              if(mode==1)
+ 153   3                              {
+ 154   4                                      if(flag==0)
+ 155   4                                      {
+ 156   5                                              s=(time[6]-'0')*10+(time[7]-'0')+add_sub;
+ 157   5                                              if(s>59)s=0;
+ 158   5                                              time[6]=s/10+'0';
+ 159   5                                              time[7]=s%10+'0';
+ 160   5                                      }
+ 161   4                                      else 
+ 162   4                                      {
+ 163   5                                              s=(alarm[6]-'0')*10+(alarm[7]-'0')+add_sub;
+ 164   5                                              if(s>59)s=0;
+ 165   5                                              alarm[6]=s/10+'0';
+ 166   5                                              alarm[7]=s%10+'0';
+ 167   5                                      }
+ 168   4                              }
+ 169   3                              else if(mode==2)
+ 170   3                              {
+ 171   4                                      if(flag==0)
+ 172   4                                      {
+ 173   5                                              mi=(time[3]-'0')*10+(time[4]-'0')+add_sub;
+ 174   5                                              if(mi>59)mi=0;
+ 175   5                                              time[3]=mi/10+'0';
+ 176   5                                              time[4]=mi%10+'0';
+ 177   5                                      }
+ 178   4                                      else
+ 179   4                                      {
+C51 COMPILER V7.06   MAIN                                                                  05/23/2017 10:34:55 PAGE 4   
+
+ 180   5                                              mi=(alarm[3]-'0')*10+(alarm[4]-'0')+add_sub;
+ 181   5                                              if(mi>59)mi=0;
+ 182   5                                              alarm[3]=mi/10+'0';
+ 183   5                                              alarm[4]=mi%10+'0';
+ 184   5                                      }
+ 185   4                              }
+ 186   3                              else if(mode==3)
+ 187   3                              {
+ 188   4                                      if(flag==0)
+ 189   4                                      {
+ 190   5                                              h=(time[0]-'0')*10+(time[1]-'0')+add_sub;
+ 191   5                                              if(h>24)h=0;
+ 192   5                                              time[0]=h/10+'0';
+ 193   5                                              time[1]=h%10+'0';
+ 194   5                                      }
+ 195   4                                      else 
+ 196   4                                      {
+ 197   5                                              h=(alarm[0]-'0')*10+(alarm[1]-'0')+add_sub;
+ 198   5                                              if(h>24)h=0;
+ 199   5                                              alarm[0]=h/10+'0';
+ 200   5                                              alarm[1]=h%10+'0';
+ 201   5                                      }
+ 202   4                              }
+ 203   3                              else if(mode==4)
+ 204   3                              {               
+ 205   4                                      y=(date[0]-'0')*1000+(date[1]-'0')*100+(date[2]-'0')*10+(date[3]-'0');
+ 206   4                                      m=(date[5]-'0')*10+(date[6]-'0');
+ 207   4                                      d=(date[8]-'0')*10+(date[9]-'0')+add_sub;
+ 208   4                                      if(y%400==0||y%100!=0&&y%4==0)
+ 209   4                                              month[2]=29;
+ 210   4                                      else month[2]=28;
+ 211   4                                      if(d>month[m])d=0;
+ 212   4                                      date[8]=d/10+'0';
+ 213   4                                      date[9]=d%10+'0';
+ 214   4                              }
+ 215   3                              else if(mode==5)
+ 216   3                              {
+ 217   4                                      y=(date[0]-'0')*1000+(date[1]-'0')*100+(date[2]-'0')*10+(date[3]-'0');
+ 218   4                                      m=(date[5]-'0')*10+(date[6]-'0')+add_sub;
+ 219   4                                      if(m>12)m=0;
+ 220   4                                      date[5]=m/10+'0';
+ 221   4                                      date[6]=m%10+'0';
+ 222   4                              }
+ 223   3                              else if(mode==6)
+ 224   3                              {
+ 225   4                                      y=(date[0]-'0')*1000+(date[1]-'0')*100+(date[2]-'0')*10+(date[3]-'0')+add_sub;
+ 226   4                                      if(y>9999)y=0;
+ 227   4                                      date[0]=y/1000+'0';
+ 228   4                                      date[1]=y/100%10+'0';
+ 229   4                                      date[2]=y/10%10+'0';
+ 230   4                                      date[3]=y%10+'0';
+ 231   4                              }
+ 232   3                      }
+ 233   2                      if(!KEY4)
+ 234   2                      {
+ 235   3                              while(!KEY4);
+ 236   3                              mode=0;
+ 237   3                              if(flag)
+ 238   3                                      flag=0;
+ 239   3                              else flag=1;
+ 240   3                      }
+ 241   2                      if(!KEY5)
+C51 COMPILER V7.06   MAIN                                                                  05/23/2017 10:34:55 PAGE 5   
+
+ 242   2                      {
+ 243   3                              while(!KEY5);
+ 244   3                              if(alarmflag)
+ 245   3                                      alarmflag=0;
+ 246   3                              else alarmflag=1;
+ 247   3                      }
+ 248   2              }
+ 249   1      }
+ 250          //0123456789ABCDEF
+ 251          //0**2017-01-01**0
+ 252          //0***00:00:00****
+ 253          //左上角闹钟开关
+ 254          //右上角选择年月日时分秒
+ 255          //左下角选择时钟/闹钟模式
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1955    ----
+   CONSTANT SIZE    =     26    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     33      52
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

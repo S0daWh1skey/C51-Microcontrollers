@@ -1,0 +1,50 @@
+C51 COMPILER V7.06   MAIN                                                                  05/01/2017 17:47:54 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: E:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include<reg51.h>
+   2          #define BAUDRATE 9600 //定义波特率为9600
+   3          #define SYSCLK 11059200  //系统时钟频率
+   4          #define uchar unsigned char
+   5          void Uart() ;
+   6          void uart_init();
+   7          void main(){
+   8   1              uchar temp;
+   9   1              uart_init();    
+  10   1          do
+  11   1              {
+  12   2              while(!RI);     //等待串口接收数据完毕
+  13   2              RI=0; // RI清0，为下次接收做准备
+  14   2              temp=SBUF;//将串口数据接收到变量temp中
+  15   2              SBUF=temp;      //启动一次串口数据发送
+  16   2              while(!TI);     //等待数据发送完毕
+  17   2              TI=0; //TI清0，为下次发送做准备
+  18   2              } while(1);
+  19   1       }
+  20          void uart_init()
+  21          {
+  22   1       TMOD=0X20;//启用定时器1：8位自动重装载方式
+  23   1       PCON=0; //设置PCON寄存器中的SMOD=0,即波特率不加倍
+  24   1       TL1 = TH1 = 256 - SYSCLK /BAUDRATE / 32 / 12;
+  25   1        SCON=0X50;
+  26   1        TR1=1;//启动定时器1工作
+  27   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     37    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

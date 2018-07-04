@@ -1,0 +1,213 @@
+C51 COMPILER V7.06   MAIN                                                                  06/07/2017 20:15:22 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: F:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include <reg52.h>
+   2          #include <intrins.h>
+   3          #include <string.h>
+   4          #include <stdio.h>
+   5          #include "1602.h"
+   6          #include "delay.h"
+   7          #include "18b20.h"
+   8          
+   9          #define PORT_KEY P3
+  10          #define PORT_DATA P0
+  11          
+  12          sbit SPK=P2^2;
+  13          
+  14          unsigned char edit_flg=0;
+  15          unsigned char spk_flg=0;
+  16          unsigned int cnt=0;
+  17          unsigned char time[3]={0};
+  18          unsigned char alm_clk[3]={23, 59, 59};
+  19          unsigned char time_limit[3]={23, 59, 59};
+  20          float temperature;
+  21          char dis_ctnt[8]={'0', '0', '-', '0', '0', '-', '0', '0'};//要显示的时间数组 
+  22          char dis_ctnt2[16];
+  23          
+  24          void set_ctnt(unsigned char *t, unsigned char i) {
+  25   1              dis_ctnt[i*3]='0'+t[i]/10;//整数格式的时间分解成对应字符并写道显示的缓存数组里 
+  26   1              dis_ctnt[i*3+1]='0'+t[i]%10;
+  27   1              LCD_Write_Char(4+i*3, 0, dis_ctnt[i*3]);//显示到屏幕上 
+  28   1              LCD_Write_Char(5+i*3, 0, dis_ctnt[i*3+1]);
+  29   1      }
+  30          
+  31          void update_temp() {
+  32   1              temperature=(float)ReadTemperature()*0.0625;//读取温度，保存到变量里 
+  33   1              sprintf(dis_ctnt2,"Temp  % 7.3f",temperature);//打印温度值
+  34   1              LCD_Write_String(0,1,dis_ctnt2);//显示第二行
+  35   1      }
+  36          
+  37          void update_time(unsigned char *t, char num) reentrant {
+  38   1              if(num<0) return ;
+  39   1              if(++(*t)>time_limit[num]) {
+  40   2                      (*t)=0;
+  41   2                      update_time(t-1, num-1);
+  42   2              }
+  43   1              if(!edit_flg) set_ctnt(time, num);
+  44   1      }
+  45          
+  46          //非递归方法
+  47          void update_time2() {
+  48   1              unsigned char i;
+  49   1              for(i=2; i>=0; i--) {
+  50   2                      if(++time[i]>time_limit[i]) {
+  51   3                              time[i]=0;
+  52   3                              if(!edit_flg) set_ctnt(time, i);//发现变量是1的话，正在编辑。 
+  53   3                      } else {
+  54   3                              if(!edit_flg) set_ctnt(time, i);
+  55   3                              break;
+C51 COMPILER V7.06   MAIN                                                                  06/07/2017 20:15:22 PAGE 2   
+
+  56   3                      }
+  57   2              }
+  58   1      }
+  59          
+  60          void init_Timer0() {
+  61   1              TMOD|=0x01;//设定了工作模式1，最多能记65536个数 
+  62   1              EA=1;//总中断开关打开 
+  63   1              ET0=1;//定时器0中断开关开 
+  64   1              TR0=1;//定时器0打开 
+  65   1      }
+  66          
+  67          void Timer0() interrupt 1 {
+  68   1              TH0=(65536-1536)/256;//高八位，重来时候让从一个指定的数开始 
+  69   1              TL0=(65536-1536)%256;//低八位 
+  70   1              cnt++;
+  71   1              if(cnt>=600) {//cnt等于600相当于过去一秒 
+  72   2                      cnt=0;//到600后，CNT即为0 
+  73   2                      update_temp();//更新温度 
+  74   2                      update_time(time+2, 2);
+  75   2                      //update_time2();
+  76   2              }
+  77   1              if(spk_flg) SPK=!SPK;// 喇叭开关，要=1的话，就响 
+  78   1      }
+  79          
+  80          unsigned char is_press() {//反转扫描 ，先给所有列赋值为1，检测并保存行的值，然后把行的值赋值给行
+  81   1      //再检测并保存列的值，然后把行列值组合就是当前键值 
+  82   1              unsigned key_val=0;
+  83   1              PORT_KEY=0x0f;
+  84   1              if(PORT_KEY!=0x0f) {
+  85   2                      DelayMs(10);
+  86   2                      if(PORT_KEY!=0x0f) {
+  87   3                              key_val=PORT_KEY&0x0f;//把接口低四位取出来，检测并保存行的值 
+  88   3                              PORT_KEY=key_val|0xf0; 
+  89   3                              key_val+=PORT_KEY&0xf0;
+  90   3      
+  91   3                              PORT_KEY=0x0f;
+  92   3                              while(PORT_KEY!=0x0f) ;//检测是否长按 
+  93   3                              return key_val;
+  94   3                      }
+  95   2              }
+  96   1              return 0xff;
+  97   1      }
+  98          
+  99          unsigned char get_input() {
+ 100   1              switch (is_press()) {
+ 101   2                      case 0x7e: return 1;
+ 102   2                      case 0x7d: return 2;
+ 103   2                      case 0x7b: return 3;
+ 104   2                      case 0xbe: return 4;
+ 105   2                      case 0xbd: return 5;
+ 106   2                      case 0xbb: return 6;
+ 107   2                      case 0xde: return 7;
+ 108   2                      case 0xdd: return 8;
+ 109   2                      case 0xdb: return 9;
+ 110   2                      case 0xee: return 0;
+ 111   2      
+ 112   2                      case 0x77: return 10;
+ 113   2                      case 0xb7: return 11;
+ 114   2                      case 0xd7: return 12;
+ 115   2                      case 0xe7: return 13;
+ 116   2                      case 0xeb: return 14;
+ 117   2                      case 0xed: return 15;
+C51 COMPILER V7.06   MAIN                                                                  06/07/2017 20:15:22 PAGE 3   
+
+ 118   2                      
+ 119   2                      default: return 0xff;
+ 120   2              }
+ 121   1      }
+ 122          
+ 123          void edit_time(unsigned char *t) {
+ 124   1              unsigned char key=0;
+ 125   1              unsigned char tmp;
+ 126   1              char i, j;
+ 127   1              for(i=0; i<3; ++i) {
+ 128   2                      tmp=0;
+ 129   2                      for(j=0; j<2; ++j) {
+ 130   3                              do {
+ 131   4                                      key=get_input();
+ 132   4                              } while(key>9);
+ 133   3                              tmp=tmp*10+key;//组合输入的两个值为十位数 
+ 134   3                              t[i]=tmp;
+ 135   3                              set_ctnt(t, i);
+ 136   3                              if(j==0) LCD_Write_Char(4+i*3, 0, '_');//把十位上0变成下划线 
+ 137   3                      }
+ 138   2                      if(tmp<0 || tmp>time_limit[i]) {
+ 139   3                              t[i]=0;
+ 140   3                              dis_ctnt[i*3]=dis_ctnt[i*3+1]='0';
+ 141   3                              LCD_Write_Char(4+i*3, 0, '_');
+ 142   3                              LCD_Write_Char(5+i*3, 0, '_');
+ 143   3                              --i;//backfitting回溯 
+ 144   3                      }
+ 145   2              }
+ 146   1      }
+ 147          
+ 148          void main() {
+ 149   1              LCD_Init(); //初始化显示屏 
+ 150   1              LCD_Clear();//清屏 
+ 151   1              LCD_Write_String(4, 0, dis_ctnt);//往LCD里写字符串，第四列第0行，字符串。 
+ 152   1              init_Timer0();//初始化定时器0 
+ 153   1              while(1) {
+ 154   2                      if(time[2]==alm_clk[2])//比较当前时间是否与闹钟时间相同 
+ 155   2                        if(time[1]==alm_clk[1])
+ 156   2                              if(time[0]==alm_clk[0])
+ 157   2                                      spk_flg=1;//相同就响 
+ 158   2                      switch (get_input()) {
+ 159   3                              case 10: //10号键，编辑时间 
+ 160   3                                      memset(dis_ctnt, '_', sizeof(dis_ctnt));//数字位全变下划线 
+ 161   3                                      dis_ctnt[2]=dis_ctnt[5]='-'; 
+ 162   3                                      LCD_Write_String(4, 0, dis_ctnt);//显示屏显示后改的 
+ 163   3                                      edit_flg=1;//处于编辑状态，编辑标志位置1 
+ 164   3                                      edit_time(time);//调用编辑时间的函数 
+ 165   3                                      cnt=0;
+ 166   3                                      edit_flg=0;
+ 167   3                                      break;
+ 168   3                              case 11://11号键，设置闹钟 
+ 169   3                                      memset(dis_ctnt, '_', sizeof(dis_ctnt));
+ 170   3                                      dis_ctnt[2]=dis_ctnt[5]='-';
+ 171   3                                      LCD_Write_String(4, 0, dis_ctnt);
+ 172   3                                      edit_flg=1;
+ 173   3                                      edit_time(alm_clk);
+ 174   3                                      edit_flg=0;
+ 175   3                                      {set_ctnt(time, 2); set_ctnt(time, 1); set_ctnt(time, 0);}//重新在屏幕上显示时间 
+ 176   3                                      break;
+ 177   3                              case 12://让喇叭停下来 
+ 178   3                                      spk_flg=0;
+ 179   3                                      SPK=0;
+C51 COMPILER V7.06   MAIN                                                                  06/07/2017 20:15:22 PAGE 4   
+
+ 180   3                                      break;
+ 181   3                      } 
+ 182   2              }
+ 183   1      }
+ 184          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1068    ----
+   CONSTANT SIZE    =     13    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     41      14
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

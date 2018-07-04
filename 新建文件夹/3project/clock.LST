@@ -1,0 +1,23 @@
+C51 COMPILER V7.06   CLOCK                                                                 05/18/2017 11:09:11 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE CLOCK
+OBJECT MODULE PLACED IN .\obj\clock.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE clock.c BROWSE DEBUG OBJECTEXTEND OBJECT(.\obj\clock.obj)
+
+stmt level    source
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

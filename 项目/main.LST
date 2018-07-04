@@ -1,0 +1,161 @@
+C51 COMPILER V7.06   MAIN                                                                  03/30/2017 08:12:07 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: D:\Keil-3\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          /***********************************
+   2          neme 矩阵按键
+   3          连线 P1->24(矩阵按键)
+   4                   P0_>J9(发光二极管)
+   5          ***********************************/
+   6          #include <reg52.h>
+   7          #define uchar unsigned char
+   8          #define uint unsigned int
+   9          #define KEY P1
+  10          #define DataPort P0
+  11          sbit LATCH_D=P2^4;
+  12          sbit LATCH_W=P2^3;
+  13          uchar DuanMa[]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,
+  14          0x7F,0x6F,0x77,0x7c,0x39,0x5e,0x79,0x71}; //0-F的字段码表
+  15          uchar Zixing[]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,
+  16          0x7F,0x6F,0x77,0x7c,0x39,0x5e,0x79,0x71};
+  17          uchar code WeiMa[]={0xfe,0xfd,0xfb,0xf7,0xef,0xdf,0xbf,0x7f};//位选码表
+  18          void delayms(uint n);
+  19          //函数声明
+  20          bit isKeyInput(void);
+  21          void WaitKeyRelease();
+  22          uchar KeySacn(void);
+  23          void delayms(uint n);
+  24          void Display(void);
+  25          void move(uchar n);
+  26          unsigned char Keycode;
+  27          //主函数
+  28          void main()
+  29          {
+  30   1              
+  31   1              while(1)
+  32   1              {
+  33   2                      Display();
+  34   2      
+  35   2                      if(isKeyInput()){
+  36   3                              delayms(10);
+  37   3                              if(isKeyInput()){
+  38   4                                      Keycode=KeySacn();
+  39   4                                      WaitKeyRelease();
+  40   4                                      move(Keycode);
+  41   4                              }       
+  42   3                      }
+  43   2      
+  44   2              }
+  45   1      }       
+  46          //1.判断键是否按下 不用动
+  47          bit isKeyInput(void){
+  48   1              KEY=0xf0;    //输出1111  0000
+  49   1              if(KEY != 0xf0)
+  50   1              return 1;
+  51   1              else
+  52   1              return 0;
+  53   1      
+  54   1      }
+  55          //2 按键松开 不用动
+C51 COMPILER V7.06   MAIN                                                                  03/30/2017 08:12:07 PAGE 2   
+
+  56          void WaitKeyRelease(){
+  57   1              while(1){
+  58   2              KEY=0xf0;
+  59   2              if(KEY==0xf0)
+  60   2              break;
+  61   2              }
+  62   1      }
+  63          void move(uchar m){
+  64   1           uchar i;
+  65   1               if(m==16)
+  66   1               {
+  67   2              for(i=0;i<8;i++){
+  68   3           DuanMa[i]=0x40;
+  69   3           }
+  70   2              } 
+  71   1           DuanMa[8]=Zixing[m];
+  72   1           for(i=0;i<8;i++){
+  73   2           DuanMa[i]=DuanMa[i+1];
+  74   2           }  
+  75   1      }
+  76          //显示函数 不用动
+  77          void Display(void){
+  78   1              uchar i;
+  79   1              for(i=0;i<8;i++){
+  80   2                      DataPort=WeiMa[i];//送位码
+  81   2                      LATCH_W=1;//位选开
+  82   2                      LATCH_W=0;//位选关
+  83   2      
+  84   2                      DataPort=DuanMa[i];//送字形码0~9
+  85   2                      LATCH_D=1;//段选开
+  86   2                      LATCH_D=0;//段选关
+  87   2                      delayms(1);//延时1ms 动态显示  
+  88   2      
+  89   2      }
+  90   1      }
+  91          
+  92          
+  93          //3 键盘扫描 不用动
+  94          uchar KeySacn(void){
+  95   1              //列:高4位，行：低4位
+  96   1              uchar Keycode;
+  97   1      
+  98   1              //扫描第一行
+  99   1              KEY=0xfe;   //1111 1110  //列
+ 100   1              if(KEY==0x7e)  Keycode=1;//0111 1110
+ 101   1              if(KEY==0xbe)  Keycode=2;//1011 1110
+ 102   1              if(KEY==0xde)  Keycode=3;//1101 1110
+ 103   1              if(KEY==0xee)  Keycode=4;//1110 1110    
+ 104   1      
+ 105   1              //扫描第二行
+ 106   1              KEY=0xfd;   //1111 1101
+ 107   1              if(KEY==0x7d)  Keycode=5;//0111 1101
+ 108   1              if(KEY==0xbd)  Keycode=8;//1011 1101
+ 109   1              if(KEY==0xdd)  Keycode=11;//1101 1101
+ 110   1              if(KEY==0xed)  Keycode=14;//1110 1101   
+ 111   1      
+ 112   1              //扫描第三行
+ 113   1              KEY=0xfb;   //1111 1011
+ 114   1              if(KEY==0x7b)  Keycode=6;//0111 1011
+ 115   1              if(KEY==0xbb)  Keycode=9;//1011 1011
+ 116   1              if(KEY==0xdb)  Keycode=12;//1101 1011
+ 117   1              if(KEY==0xeb)  Keycode=15;//1110 1011   
+C51 COMPILER V7.06   MAIN                                                                  03/30/2017 08:12:07 PAGE 3   
+
+ 118   1      
+ 119   1              //扫描第四行
+ 120   1              KEY=0xf7;   //1111 0111
+ 121   1              if(KEY==0x77)  Keycode=7;//0111 0111
+ 122   1              if(KEY==0xb7)  Keycode=10;//1011 0111
+ 123   1              if(KEY==0xd7)  Keycode=13;//1101 0111
+ 124   1              if(KEY==0xe7)  Keycode=16;//1110 0111   
+ 125   1      
+ 126   1              return Keycode;
+ 127   1      }
+ 128          //延时函数 不用动
+ 129          void delayms(uint n)
+ 130          {
+ 131   1              uint i,j;
+ 132   1              for(i=0;i<n;i++)
+ 133   1                      for(j=110;j>0;j--);
+ 134   1              }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    296    ----
+   CONSTANT SIZE    =      8    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     33       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

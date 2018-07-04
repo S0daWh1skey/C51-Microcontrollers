@@ -1,0 +1,47 @@
+C51 COMPILER V7.06   DISPLAY                                                               06/13/2017 07:45:54 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE DISPLAY
+OBJECT MODULE PLACED IN display.OBJ
+COMPILER INVOKED BY: E:\Keil\C51\BIN\C51.EXE display.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include<reg52.h> 
+   2          #include"display.h"
+   3          void Display(unsigned char FirstBit,unsigned char Num)
+   4          {
+   5   1           
+   6   1      
+   7   1                 DataPort=0;   
+   8   1             LATCH1=1;     
+   9   1             LATCH1=0;
+  10   1      
+  11   1             DataPort=dofly_WeiMa[i+FirstBit]; //取位码 
+  12   1             LATCH2=1;     //位锁存
+  13   1             LATCH2=0;
+  14   1      
+  15   1             DataPort=TempData[i]; //取显示数据，段码
+  16   1             LATCH1=1;     //段锁存
+  17   1             LATCH1=0;
+  18   1             
+  19   1                 i++;
+  20   1             if(i==Num)
+  21   1                    i=0;
+  22   1      
+  23   1      
+  24   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     55    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

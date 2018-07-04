@@ -1,0 +1,123 @@
+C51 COMPILER V7.06   MAIN                                                                  03/30/2017 07:33:42 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: D:\Keil-3\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          /***********************************************
+   2          name:矩阵按键
+   3          连线：P1->J24(矩阵按键)
+   4                P0->J9(发光二极管)
+   5          ***********************************************/
+   6          #include<reg51.h>
+   7          #define uchar unsigned char
+   8          #define uint unsigned int
+   9          #define Key P1
+  10          #define Led P0
+  11          //函数声明
+  12          uchar KeySacn(void);
+  13          void Wait_KeyRelease(void);
+  14          bit isKeyInput(void);
+  15          void delayms(uint n);
+  16          //主函数
+  17          void main()
+  18          {
+  19   1              while(1)
+  20   1              {
+  21   2                      uchar keycode;
+  22   2                      //1、判断按键按下
+  23   2                      if(isKeyInput())
+  24   2      {
+  25   3                              delayms(10);//
+  26   3                              if(isKeyInput())
+  27   3              {
+  28   4                      keycode=KeySacn();
+  29   4                      Wait_KeyRelease();
+  30   4                      Led=~keycode;
+  31   4                      }
+  32   3              }
+  33   2      }
+  34   1              
+  35   1      }
+  36          //1、判断按键按下
+  37          bit isKeyInput(void)
+  38          {
+  39   1              Key=0xf0;   //1111 0000
+  40   1              if(Key!=0xf0)
+  41   1                      return 1;
+  42   1              else
+  43   1                      return 0;       
+  44   1      }
+  45          //2、判断按键松开
+  46          void Wait_KeyRelease(void)
+  47          {
+  48   1              while(1)
+  49   1              {
+  50   2                      Key=0xf0;
+  51   2                      if(Key==0xf0)
+  52   2                              break;
+  53   2              }
+  54   1      }
+  55          //3、键盘扫描
+C51 COMPILER V7.06   MAIN                                                                  03/30/2017 07:33:42 PAGE 2   
+
+  56          uchar KeySacn(void)
+  57          {
+  58   1              //列:高4位，行：低4位
+  59   1              uchar keycode;
+  60   1      
+  61   1              //扫描第一行
+  62   1              Key=0xfe;   //1111 1110  //列
+  63   1              if(Key==0x7e)  keycode=1;//0111 1110
+  64   1              if(Key==0xbe)  keycode=2;//1011 1110
+  65   1              if(Key==0xde)  keycode=3;//1101 1110
+  66   1              if(Key==0xee)  keycode=4;//1110 1110    
+  67   1      
+  68   1              //扫描第二行
+  69   1              Key=0xfd;   //1111 1101
+  70   1              if(Key==0x7d)  keycode=5;//0111 1101
+  71   1              if(Key==0xbd)  keycode=8;//1011 1101
+  72   1              if(Key==0xdd)  keycode=11;//1101 1101
+  73   1              if(Key==0xed)  keycode=14;//1110 1101   
+  74   1      
+  75   1              //扫描第三行
+  76   1              Key=0xfb;   //1111 1011
+  77   1              if(Key==0x7b)  keycode=6;//0111 1011
+  78   1              if(Key==0xbb)  keycode=9;//1011 1011
+  79   1              if(Key==0xdb)  keycode=12;//1101 1011
+  80   1              if(Key==0xeb)  keycode=15;//1110 1011   
+  81   1      
+  82   1              //扫描第四行
+  83   1              Key=0xf7;   //1111 0111
+  84   1              if(Key==0x77)  keycode=7;//0111 0111
+  85   1              if(Key==0xb7)  keycode=10;//1011 0111
+  86   1              if(Key==0xd7)  keycode=13;//1101 0111
+  87   1              if(Key==0xe7)  keycode=16;//1110 0111   
+  88   1      
+  89   1              return keycode;
+  90   1      }
+  91          //4、延时函数：ms
+  92          void delayms(uint n)
+  93          {
+  94   1              uint i,j;
+  95   1              for(i=0;i<n;i++)
+  96   1                      for(j=110;j>0;j--);
+  97   1      }
+  98          //1000=1s
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    210    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

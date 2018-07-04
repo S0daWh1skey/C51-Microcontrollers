@@ -1,0 +1,74 @@
+C51 COMPILER V7.06   KEY                                                                   03/28/2017 08:56:55 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE KEY
+OBJECT MODULE PLACED IN key.OBJ
+COMPILER INVOKED BY: D:\Keil-3\C51\BIN\C51.EXE key.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include<reg52.h>
+   2          #define uint unsigned int
+   3          #define uchar unsigned char
+   4          void delayms(uint xms);
+   5          sbit KEY_ADD=P3^0;
+   6          sbit KEY_DEC=P3^1;
+   7          #define DataPort P1
+   8          sbit LATCH_D=P2^2;
+   9          sbit LATCH_W=P2^3;
+  10          uchar code DuanMa[]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07};
+  11          uchar code WeiMa[]={0xfe,0xfd,0xfb,0xf7,0xef,0xdf,0xbf,0x7f};
+  12          void delayms(uint xms)
+  13          {
+  14   1              uint i,j;
+  15   1              for(i=xms;i>0;i--)
+  16   1              for(j=110;j>0;j--);
+  17   1      }
+  18          void main(void)
+  19          {       
+  20   1              uchar num=0;
+  21   1              KEY_ADD=1;
+  22   1              KEY_DEC=1;
+  23   1              while(1)
+  24   1              {       if(!KEY_ADD)
+  25   2                      {
+  26   3                              delayms(20);
+  27   3                      if(!KEY_ADD)
+  28   3                              {
+  29   4                              while(!KEY_ADD);
+  30   4                              if(num<9)
+  31   4                                      num++;
+  32   4                              while(!KEY_DEC);
+  33   4                              if(num>0)
+  34   4                                      num--;
+  35   4              }
+  36   3      }
+  37   2              DataPort=WeiMa[0];
+  38   2              LATCH_W=1;
+  39   2              LATCH_W=0;
+  40   2      
+  41   2              DataPort=DuanMa[num];
+  42   2              LATCH_D=1;
+  43   2              LATCH_D=0;
+  44   2                              //delayms(100);
+  45   2                      }
+  46   1                      //else
+  47   1                      //      LED=1;
+  48   1      }
+  49          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     93    ----
+   CONSTANT SIZE    =     16    ----
+   XDATA SIZE       =   ----    ----
+C51 COMPILER V7.06   KEY                                                                   03/28/2017 08:56:55 PAGE 2   
+
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

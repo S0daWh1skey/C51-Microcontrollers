@@ -1,0 +1,53 @@
+C51 COMPILER V7.06   DISPLAY                                                               06/11/2017 18:09:55 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE DISPLAY
+OBJECT MODULE PLACED IN display.OBJ
+COMPILER INVOKED BY: E:\Keil\C51\BIN\C51.EXE display.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include<reg52.h> //包含头文件，一般情况不需要改动，头文件包含特殊功能寄存器的定义
+   2          #include"display.h"
+   3          /*------------------------------------------------
+   4           显示函数，用于动态扫描数码管
+   5           输入参数 FirstBit 表示需要显示的第一位，如赋值2表示从第三个数码管开始显示
+   6           如输入0表示从第一个显示。
+   7           Num表示需要显示的位数，如需要显示99两位数值则该值输入2
+   8          ------------------------------------------------*/
+   9          void Display(unsigned char FirstBit,unsigned char Num)
+  10          {
+  11   1           
+  12   1      
+  13   1                 DataPort=0;   //清空数据，防止有交替重影
+  14   1             LATCH1=1;     //段锁存
+  15   1             LATCH1=0;
+  16   1      
+  17   1             DataPort=dofly_WeiMa[i+FirstBit]; //取位码 
+  18   1             LATCH2=1;     //位锁存
+  19   1             LATCH2=0;
+  20   1      
+  21   1             DataPort=TempData[i]; //取显示数据，段码
+  22   1             LATCH1=1;     //段锁存
+  23   1             LATCH1=0;
+  24   1             
+  25   1                 i++;
+  26   1             if(i==Num)
+  27   1                    i=0;
+  28   1      
+  29   1      
+  30   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     55    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

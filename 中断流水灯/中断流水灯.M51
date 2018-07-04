@@ -1,0 +1,200 @@
+BL51 BANKED LINKER/LOCATER V5.03                                                        04/11/2017  09:22:03  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V5.03, INVOKED BY:
+D:\KEIL-3\C51\BIN\BL51.EXE .\STARTUP.obj, main.obj TO 中断流水灯 RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\STARTUP.obj (?C_STARTUP)
+  main.obj (MAIN)
+  D:\KEIL-3\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  中断流水灯 (?C_STARTUP)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0001H     UNIT         ?DT?MAIN
+                    0009H     0017H                  *** GAP ***
+            BIT     0020H.0   0000H.2   UNIT         ?BI?MAIN
+                    0020H.2   0000H.6                *** GAP ***
+            IDATA   0021H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     000FH     UNIT         ?PR?DELAY1?MAIN
+                    0012H     0001H                  *** GAP ***
+            CODE    0013H     0003H     ABSOLUTE     
+            CODE    0016H     008CH     UNIT         ?C_C51STARTUP
+            CODE    00A2H     0027H     UNIT         ?PR?WATERLED?MAIN
+            CODE    00C9H     001CH     UNIT         ?PR?INT1SERVICE?MAIN
+            CODE    00E5H     0019H     UNIT         ?PR?MAIN?MAIN
+            CODE    00FEH     000AH     UNIT         ?PR?_DELAY?MAIN
+            CODE    0108H     0008H     UNIT         ?C_INITSEG
+            CODE    0110H     0007H     UNIT         ?PR?INITINT1?MAIN
+
+
+
+OVERLAY MAP OF MODULE:   中断流水灯 (?C_STARTUP)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?MAIN
+  +--> ?C_INITSEG
+
+?PR?MAIN?MAIN
+  +--> ?PR?INITINT1?MAIN
+  +--> ?PR?WATERLED?MAIN
+
+?PR?WATERLED?MAIN
+  +--> ?PR?DELAY1?MAIN
+BL51 BANKED LINKER/LOCATER V5.03                                                      04/11/2017  09:22:03  PAGE 2
+
+
+
+*** NEW ROOT ***************************************************
+
+?PR?INT1SERVICE?MAIN
+  +--> ?PR?_DELAY?MAIN
+
+
+
+SYMBOL TABLE OF MODULE:  中断流水灯 (?C_STARTUP)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C_STARTUP
+  C:0016H         SEGMENT       ?C_C51STARTUP
+  I:0021H         SEGMENT       ?STACK
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:0019H         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0000H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:0016H         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+  N:0000H         SYMBOL        XDATALEN
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         92
+  C:0016H         LINE#         99
+  C:0018H         LINE#         100
+  C:0019H         LINE#         101
+  C:001AH         LINE#         102
+  C:001CH         LINE#         151
+  C:001FH         LINE#         155
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  B:00A8H.7       PUBLIC        EA
+  C:0110H         PUBLIC        initInt1
+  B:0020H.0       PUBLIC        int1flag
+  C:00E5H         PUBLIC        main
+  C:0003H         PUBLIC        delay1
+  B:0020H.1       PUBLIC        waterflag
+BL51 BANKED LINKER/LOCATER V5.03                                                      04/11/2017  09:22:03  PAGE 3
+
+
+  B:00A8H.2       PUBLIC        EX1
+  B:0088H.2       PUBLIC        IT1
+  C:00C9H         PUBLIC        int1Service
+  C:00A2H         PUBLIC        waterled
+  B:00B0H.3       PUBLIC        KEY
+  C:00FEH         PUBLIC        _delay
+  -------         PROC          INITINT1
+  C:0110H         LINE#         6
+  C:0110H         LINE#         7
+  C:0112H         LINE#         8
+  C:0114H         LINE#         9
+  C:0116H         LINE#         11
+  -------         ENDPROC       INITINT1
+  -------         PROC          _DELAY
+  D:0007H         SYMBOL        i
+  C:00FEH         LINE#         13
+  C:00FEH         LINE#         14
+  C:0107H         LINE#         15
+  -------         ENDPROC       _DELAY
+  -------         PROC          DELAY1
+  -------         DO            
+  D:0006H         SYMBOL        i
+  -------         ENDDO         
+  C:0003H         LINE#         17
+  C:0003H         LINE#         19
+  C:0011H         LINE#         20
+  -------         ENDPROC       DELAY1
+  -------         PROC          WATERLED
+  -------         DO            
+  D:0008H         SYMBOL        tmp
+  -------         ENDDO         
+  C:00A2H         LINE#         22
+  C:00A2H         LINE#         24
+  C:00A5H         LINE#         25
+  C:00A8H         LINE#         26
+  C:00ABH         LINE#         27
+  C:00B3H         LINE#         28
+  C:00B6H         LINE#         29
+  C:00B9H         LINE#         30
+  C:00BAH         LINE#         31
+  C:00C2H         LINE#         32
+  C:00C5H         LINE#         33
+  C:00C8H         LINE#         34
+  C:00C8H         LINE#         35
+  -------         ENDPROC       WATERLED
+  -------         PROC          INT1SERVICE
+  C:00C9H         LINE#         36
+  C:00D2H         LINE#         37
+  C:00D7H         LINE#         38
+  C:00DAH         LINE#         39
+  C:00DCH         LINE#         40
+  C:00DEH         LINE#         41
+  C:00DEH         LINE#         42
+  -------         ENDPROC       INT1SERVICE
+  -------         PROC          MAIN
+  C:00E5H         LINE#         44
+  C:00E5H         LINE#         45
+BL51 BANKED LINKER/LOCATER V5.03                                                      04/11/2017  09:22:03  PAGE 4
+
+
+  C:00E8H         LINE#         46
+  C:00E8H         LINE#         47
+  C:00EBH         LINE#         48
+  C:00EEH         LINE#         49
+  C:00F1H         LINE#         50
+  C:00F4H         LINE#         51
+  C:00F6H         LINE#         52
+  C:00F8H         LINE#         53
+  C:00FAH         LINE#         54
+  C:00FCH         LINE#         55
+  C:00FCH         LINE#         56
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+Program Size: data=10.2 xdata=0 code=278
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,109 @@
+C51 COMPILER V7.06   1602                                                                  05/23/2017 10:34:55 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE 1602
+OBJECT MODULE PLACED IN .\obj\1602.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE 1602.c BROWSE DEBUG OBJECTEXTEND OBJECT(.\obj\1602.obj)
+
+stmt level    source
+
+   1          #include"1602.h"
+   2          #include"delay.h"
+   3          #include<reg52.h>
+   4          #include<intrins.h>
+   5          bit LCD_Check_Busy(void)
+   6          {
+   7   1              DataPort=0xff;
+   8   1              RS=0;
+   9   1              RW=1;
+  10   1              EN=0;
+  11   1              _nop_();
+  12   1              EN=1;
+  13   1              return (bit)(DataPort & 0x80);
+  14   1      }
+  15          void LCD_Write_Com(unsigned char com)
+  16          {
+  17   1              while(LCD_Check_Busy());//忙则等待
+  18   1              DelayMs(5);
+  19   1              RS=0;
+  20   1              RW=0;
+  21   1              EN=1;
+  22   1              DataPort=com;
+  23   1              _nop_();
+  24   1              EN=0;
+  25   1      }
+  26          void LCD_Clear(void)
+  27          {
+  28   1              LCD_Write_Com(0x01);
+  29   1              DelayMs(5);
+  30   1      }
+  31          void LCD_Write_Data(unsigned char Data)
+  32          {
+  33   1              while(LCD_Check_Busy());//忙则等待
+  34   1              DelayMs(5);
+  35   1              RS=1;
+  36   1              RW=0;
+  37   1              EN=1;
+  38   1              DataPort=Data;
+  39   1              _nop_();
+  40   1              EN=0;
+  41   1      }
+  42          void LCD_Write_Char(unsigned char x,unsigned char y,unsigned char Data)
+  43          {
+  44   1              if(y==0)
+  45   1              {
+  46   2                      LCD_Write_Com(0x80+x);
+  47   2              }
+  48   1              else
+  49   1              {
+  50   2                      LCD_Write_Com(0xc0+x);
+  51   2              }
+  52   1              LCD_Write_Data(Data);
+  53   1      }
+  54          void LCD_Write_String(unsigned char x,unsigned char y,unsigned char *s)
+  55          {
+C51 COMPILER V7.06   1602                                                                  05/23/2017 10:34:55 PAGE 2   
+
+  56   1              if(y==0)
+  57   1              {
+  58   2                      LCD_Write_Com(0x80+x);
+  59   2              }
+  60   1              else
+  61   1              {
+  62   2                      LCD_Write_Com(0xc0+x);
+  63   2              }
+  64   1              while(*s)
+  65   1              {
+  66   2                      LCD_Write_Data(*s);
+  67   2                      s++;
+  68   2              }
+  69   1      }
+  70          void LCD_Init(void)
+  71          {
+  72   1              LCD_Write_Com(0x38);
+  73   1              DelayMs(5);
+  74   1              LCD_Write_Com(0x38);
+  75   1              DelayMs(5);
+  76   1              LCD_Write_Com(0x38);
+  77   1              DelayMs(5);
+  78   1              LCD_Write_Com(0x38);
+  79   1              LCD_Write_Com(0x08);
+  80   1              LCD_Write_Com(0x01);
+  81   1              LCD_Write_Com(0x06);
+  82   1              DelayMs(5);
+  83   1              LCD_Write_Com(0x0C);
+  84   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    230    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       8
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,154 @@
+BL51 BANKED LINKER/LOCATER V5.03                                                        06/09/2017  21:13:33  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V5.03, INVOKED BY:
+E:\KEIL\C51\BIN\BL51.EXE .\STARTUP.obj, main.obj TO ·äÃùÆ÷ RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\STARTUP.obj (?C_STARTUP)
+  main.obj (MAIN)
+
+
+LINK MAP OF MODULE:  ·äÃùÆ÷ (?C_STARTUP)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0002H     UNIT         _DATA_GROUP_
+            IDATA   000AH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0063H     UNIT         ?PR?PLAYMUSIC?MAIN
+            CODE    0066H     0034H     UNIT         ?CO?MAIN
+            CODE    009AH     0016H     UNIT         ?PR?_DELAYMS?MAIN
+            CODE    00B0H     000EH     UNIT         ?PR?MAIN?MAIN
+            CODE    00BEH     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   ·äÃùÆ÷ (?C_STARTUP)
+
+
+SEGMENT                          DATA_GROUP 
+  +--> CALLED SEGMENT          START    LENGTH
+----------------------------------------------
+?C_C51STARTUP                  -----    -----
+  +--> ?PR?MAIN?MAIN
+
+?PR?MAIN?MAIN                  -----    -----
+  +--> ?PR?PLAYMUSIC?MAIN
+  +--> ?PR?_DELAYMS?MAIN
+
+?PR?PLAYMUSIC?MAIN             0008H    0002H
+  +--> ?CO?MAIN
+  +--> ?PR?_DELAYMS?MAIN
+
+
+
+SYMBOL TABLE OF MODULE:  ·äÃùÆ÷ (?C_STARTUP)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C_STARTUP
+BL51 BANKED LINKER/LOCATER V5.03                                                      06/09/2017  21:13:33  PAGE 2
+
+
+  C:00BEH         SEGMENT       ?C_C51STARTUP
+  I:000AH         SEGMENT       ?STACK
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:00C1H         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0000H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:00BEH         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+  N:0000H         SYMBOL        XDATALEN
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         92
+  C:00BEH         LINE#         99
+  C:00C0H         LINE#         100
+  C:00C1H         LINE#         101
+  C:00C2H         LINE#         102
+  C:00C4H         LINE#         151
+  C:00C7H         LINE#         155
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00A0H         PUBLIC        P2
+  C:0003H         PUBLIC        PlayMusic
+  B:00A0H.4       PUBLIC        beep
+  C:00B0H         PUBLIC        main
+  C:0080H         PUBLIC        SONG_LONG
+  C:0066H         PUBLIC        SONG_TONE
+  C:009AH         PUBLIC        _DelayMS
+  -------         PROC          _DELAYMS
+  D:0006H         SYMBOL        x
+  -------         DO            
+  D:0005H         SYMBOL        t
+  -------         ENDDO         
+  C:009AH         LINE#         12
+  C:009AH         LINE#         13
+  C:009AH         LINE#         15
+  C:00AFH         LINE#         16
+  -------         ENDPROC       _DELAYMS
+  -------         PROC          PLAYMUSIC
+  -------         DO            
+  D:0008H         SYMBOL        i
+  D:0004H         SYMBOL        j
+  D:0006H         SYMBOL        k
+BL51 BANKED LINKER/LOCATER V5.03                                                      06/09/2017  21:13:33  PAGE 3
+
+
+  -------         ENDDO         
+  C:0003H         LINE#         18
+  C:0003H         LINE#         19
+  C:0003H         LINE#         20
+  C:0008H         LINE#         21
+  C:0018H         LINE#         22
+  C:0018H         LINE#         23
+  C:002EH         LINE#         24
+  C:002EH         LINE#         25
+  C:0030H         LINE#         27
+  C:004DH         LINE#         28
+  C:0054H         LINE#         29
+  C:005BH         LINE#         30
+  C:0063H         LINE#         31
+  C:0065H         LINE#         32
+  -------         ENDPROC       PLAYMUSIC
+  -------         PROC          MAIN
+  C:00B0H         LINE#         35
+  C:00B0H         LINE#         36
+  C:00B0H         LINE#         38
+  C:00B2H         LINE#         39
+  C:00B2H         LINE#         40
+  C:00B2H         LINE#         41
+  C:00B5H         LINE#         42
+  C:00BCH         LINE#         43
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+Program Size: data=11.0 xdata=0 code=202
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

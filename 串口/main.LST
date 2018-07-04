@@ -1,0 +1,44 @@
+C51 COMPILER V7.06   MAIN                                                                  05/01/2017 17:43:00 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: E:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include<reg52.h>
+   2          #define uchar unsigned char
+   3          #define uint unsigned int
+   4          main()
+   5          {
+   6   1              uchar temp;
+   7   1              uint i;
+   8   1              SCON = 0x00;    //设置串口工作方式：方式0
+   9   1              temp = 0x01;    //设置显示初值：0000 0001,7个亮1个灭
+  10   1              while(1)
+  11   1              {
+  12   2              SBUF = temp;    //将数据写入SBUF->串口开始发送操作
+  13   2              while(!TI);     //等待串口输出完毕，如果输出完，硬件会自动使TI=1
+  14   2              TI = 0;         //清除发送标志，等待下一次发送结束
+  15   2              for(i=0; i<20000;i++);//延时
+  16   2      
+  17   2              temp *=2;       //修改数据，使下一个灯亮（左移1位）
+  18   2              if(temp == 0x00)
+  19   2                      temp = 0x01;//如果数据全0，恢复为初始数据                       }
+  20   2      }
+  21   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     36    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

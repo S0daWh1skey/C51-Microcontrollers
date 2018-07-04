@@ -1,0 +1,94 @@
+C51 COMPILER V7.06   MAIN                                                                  03/16/2017 09:22:58 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: D:\Keil-3\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include <reg51.h>
+   2          typedef unsigned int uint;
+   3          typedef unsigned char uchar;
+   4          #define ms 100
+   5          void delayms(uint s)
+   6          {
+   7   1              int t;
+   8   1              while(s--)
+   9   1                      for(t = 0;t != ms;t++);
+  10   1      }
+  11          void main (){
+  12   1        uchar code table[10]={0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x90};
+  13   1        uint i;
+  14   1        while (1)
+  15   1        {
+  16   2            for (i=0;i<10;i++)
+  17   2                {
+  18   3              P1=table[i];
+  19   3              delayms(1000);
+  20   3            }
+  21   2        }
+  22   1      }
+  23          
+  24          
+  25          /*#include <reg52.h>  
+  26          #define LONG 50000  
+  27          #define SHORT 10000  
+  28            
+  29          //先定义字形码，table数组中装下了自形0到9  
+  30          unsigned int table[] = {0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90};  
+  31            
+  32          //延时函数  
+  33          void delay(int i) {  
+  34              while(i--) {  
+  35              }  
+  36          }  
+  37            
+  38          void main() {  
+  39              int i = 0;  
+  40              while(1) {  
+  41                  for(i = 0; i < 10; i++) {  
+  42                      P0 = table[i];  
+  43                      delay(LONG);  
+  44                  }  
+  45              }  
+  46          }  
+  47          */
+  48          /*
+  49          #include<reg51.h>
+  50          void delayms(uint);
+  51          typedef unsigned int uint;
+  52          typedef unsigned char uchar;
+  53          uchar code a[10]={0xc0,0xf9,0xa4,0xb0,0x99,0x92,0x82,0xf8,0x80,0x7f};   
+  54          void main(){
+  55          while(1){
+C51 COMPILER V7.06   MAIN                                                                  03/16/2017 09:22:58 PAGE 2   
+
+  56                          uchar x;
+  57                          for(x=0;x<10;x++){
+  58                          P1=a[x];
+  59                          delayms(500);   
+  60                          }       
+  61                  }
+  62          }
+  63          void delayms(uint xms)
+  64          {
+  65                  uint i,j;
+  66                  for(i=xms;i>0;i--)
+  67                  for(j=110;j>0;j--);
+  68          }
+  69          */
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     66    ----
+   CONSTANT SIZE    =     10    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

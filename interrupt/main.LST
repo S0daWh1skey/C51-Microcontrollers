@@ -1,0 +1,44 @@
+C51 COMPILER V7.06   MAIN                                                                  04/06/2017 09:37:58 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: D:\Keil-3\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include<reg51.h>
+   2          #define LED P2
+   3          sbit KEY=P3^3;
+   4          void EnableInt1(void)
+   5          {
+   6   1              IT1=1;
+   7   1              EA=1;
+   8   1              EX1=1;
+   9   1      }
+  10          void Int(void)interrupt 2
+  11          {
+  12   1              LED=~LED;
+  13   1      }
+  14          main()
+  15          {
+  16   1              EnableInt1();
+  17   1              LED=0;
+  18   1              while(1);
+  19   1      
+  20   1      }
+  21          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     19    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

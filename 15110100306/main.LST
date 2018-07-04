@@ -1,0 +1,121 @@
+C51 COMPILER V7.06   MAIN                                                                  06/13/2017 07:45:54 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: E:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include<reg52.h> 
+   2          #include"delay.h"
+   3          #include"display.h"
+   4          #include"playmusic.h"
+   5          #include"keyscan.h"
+   6          #include"timer.h"
+   7          #include"18b20.h"
+   8          unsigned char num;
+   9          unsigned char hour,minute,second;
+  10          unsigned char Ahour,Aminute,Asecond;
+  11          bit UpdateTimeFlag;
+  12          unsigned char code dofly_DuanMa[10]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};
+  13          unsigned char code dofly_WeiMa[]={0xfe,0xfd,0xfb,0xf7,0xef,0xdf,0xbf,0x7f};
+  14          unsigned char TempData[8]; 
+  15          bit Time_seted_flag=0;
+  16          bit Temp_show_flag=0;
+  17          bit Alarm_seted_flag=0;
+  18          bit Temp_showed_flag=0;
+  19          bit Alarm_closed_flag=0;
+  20          int temp; 
+  21          int temphour;   
+  22          void main (void)
+  23          {
+  24   1      Init_Timer0();
+  25   1      while (1)         
+  26   1      {
+  27   2      num=KeyScan();
+  28   2      switch(num)
+  29   2      {
+  30   3                  case 1:hour++;if(hour==24)hour=0;     
+  31   3                   break;
+  32   3                      case 3:minute++;if(minute==60)minute=0;     
+  33   3                       break;
+  34   3                      case 5:second++;if(second==60)second=0;     
+  35   3                       break;
+  36   3                      case 7:Time_seted_flag=1;                       
+  37   3                              break;
+  38   3                      case 8:Alarm_seted_flag=1;
+  39   3                              break;
+  40   3                      case 2:Temp_show_flag=1; 
+  41   3                               break;
+  42   3                      case 4:Alarm_closed_flag=1;
+  43   3                              break;
+  44   3                      default:break;
+  45   3      }
+  46   2      
+  47   2      if(Alarm_seted_flag==1){
+  48   3              Ahour=hour;      
+  49   3              Aminute=minute;
+  50   3              Asecond=second;
+  51   3              hour=minute=second=0;
+  52   3              Time_seted_flag=0;
+  53   3              Alarm_seted_flag=0;
+  54   3      }
+  55   2      
+C51 COMPILER V7.06   MAIN                                                                  06/13/2017 07:45:54 PAGE 2   
+
+  56   2      if(UpdateTimeFlag==1)
+  57   2      {
+  58   3       UpdateTimeFlag=0;
+  59   3       TempData[0]=dofly_DuanMa[hour/10]; 
+  60   3       TempData[1]=dofly_DuanMa[hour%10]; 
+  61   3       TempData[2]=0x40;                                                     
+  62   3       TempData[3]=dofly_DuanMa[minute/10];
+  63   3       TempData[4]=dofly_DuanMa[minute%10];
+  64   3       TempData[5]=0x40;
+  65   3       TempData[6]=dofly_DuanMa[second/10];
+  66   3       TempData[7]=dofly_DuanMa[second%10];    
+  67   3      }       
+  68   2      
+  69   2      if(Temp_show_flag==1&&Temp_showed_flag==0){ 
+  70   3      temp=0;
+  71   3      temp=ReadTemperature();  
+  72   3      temphour=hour; 
+  73   3      hour=temp*0.625; 
+  74   3      Temp_showed_flag=1;     
+  75   3      Temp_show_flag=0;       
+  76   3      }
+  77   2      
+  78   2      if(Temp_showed_flag==1&&Temp_show_flag==1){
+  79   3              hour=temphour;
+  80   3              Temp_show_flag=0;       
+  81   3              Temp_showed_flag=0;
+  82   3      }
+  83   2              
+  84   2      if(Ahour==hour&&Aminute==minute&&Asecond==second){ 
+  85   3              if(hour!=0||second!=0||minute!=0){ 
+  86   4          PlayMusic();  
+  87   4              DelayMs(200);
+  88   4              if(Alarm_closed_flag==0){ 
+  89   5              Ahour=hour; 
+  90   5              Aminute=minute;
+  91   5              Asecond=second;  
+  92   5              }
+  93   4                      }
+  94   3              }
+  95   2      }
+  96   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    333    ----
+   CONSTANT SIZE    =     18    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     20    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      6    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

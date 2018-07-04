@@ -1,0 +1,55 @@
+C51 COMPILER V7.06   KEYSCAN                                                               06/13/2017 07:45:55 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE KEYSCAN
+OBJECT MODULE PLACED IN keyscan.OBJ
+COMPILER INVOKED BY: E:\Keil\C51\BIN\C51.EXE keyscan.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include<reg52.h>
+   2          #include"keyscan.h"
+   3          #include"delay.h"
+   4          unsigned char KeyScan(void)
+   5          {
+   6   1       unsigned char keyvalue;
+   7   1       if(KeyPort!=0xff)
+   8   1         {
+   9   2          DelayMs(10);
+  10   2          if(KeyPort!=0xff)
+  11   2                 {
+  12   3                  keyvalue=KeyPort;
+  13   3                  while(KeyPort!=0xff);
+  14   3                      switch(keyvalue)
+  15   3                      {
+  16   4                       case 0xfe:return 1;break;
+  17   4                       case 0xfd:return 2;break;
+  18   4                       case 0xfb:return 3;break;
+  19   4                       case 0xf7:return 4;break;
+  20   4                       case 0xef:return 5;break;
+  21   4                       case 0xdf:return 6;break;
+  22   4                       case 0xbf:return 7;break;
+  23   4                       case 0x7f:return 8;break;
+  24   4                       default:return   0;break;
+  25   4                      }
+  26   3                }
+  27   2         }
+  28   1         return 0;
+  29   1      }
+  30          
+  31          
+  32          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     84    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
